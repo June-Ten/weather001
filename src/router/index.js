@@ -22,6 +22,10 @@ const routes = [
       {
         path: 'weather-statistic-analysis',
         component: ()=>import('../components/homeChildren/StatisticsAnalysis/StatisticsAnalysis.vue')
+      },
+      {
+        path: 'tensorflow',
+        component: ()=>import('../components/homeChildren/tensorflow/Tensorflow.vue')
       }
     ]
   }

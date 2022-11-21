@@ -59,7 +59,7 @@
     <el-menu-item index="/home/weather-statistic-analysis"
       >天气状况统计分析</el-menu-item
     >
-    <el-menu-item index="/home/3">Processing 3</el-menu-item>
+    <el-menu-item index="/home/tensorflow">Tensorflow</el-menu-item>
     <el-menu-item index="/home/4">Processing 4</el-menu-item>
   </el-menu>
   <div class="main">

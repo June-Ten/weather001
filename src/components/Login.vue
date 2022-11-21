@@ -67,7 +67,7 @@
         <el-button type="primary" @click="submitForm(ruleFormRef)"
           >登录</el-button
         >
-        <el-button>游客登录</el-button>
+        <el-button @click="visitorLogin">游客登录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -112,6 +112,11 @@ const submitForm = async (formEl) => {
     }
   });
 };
+
+// 游客登录
+const visitorLogin = () => {
+  router.push('/')
+}
 </script>
 
 <style lang="less" scoped>
