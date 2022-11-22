@@ -53,9 +53,9 @@ function test() {
 
   const config = { epochs: 30, batchSize: 4 };
 
-  // async function loadData(path) {
-  //   return await d3.csv(path);
-  // }
+  async function loadData(path) {
+    return await d3.csv(path);
+  }
 
   // LSTM模型需要一个三维数据的输入
   // 分别对应Batch（数据是一批一批进入神经网络训练
@@ -143,7 +143,7 @@ function test() {
     const container = {
       name: "show.fitCallbacks",
       tab: "Training",
-      drawArea: document.getElementById("tensorflow-container"),
+      drawArea: document.getElementById('main'),
       // styles: {
       //   height: "1000px",
       // },
@@ -172,15 +172,15 @@ function test() {
   }
 
   (async function () {
-    // const airPassagnerData = await loadData(
-    //   "https://cdn.jsdelivr.net/gh/gangtao/datasets@master/csv/air_passengers.csv"
-    // );
-    let tempData = await axios.get(apis.tensorflowMaxTemp);
-    tempData.data.forEach((item) => {
-      item.Number = String(item.Number);
-    });
-    const airPassagnerData = tempData.data;
-    airPassagnerData.columns = ["Date", "Number"];
+    const airPassagnerData = await loadData(
+      "https://cdn.jsdelivr.net/gh/gangtao/datasets@master/csv/air_passengers.csv"
+    );
+    // let tempData = await axios.get(apis.tensorflowMaxTemp);
+    // tempData.data.forEach((item) => {
+    //   item.Number = String(item.Number);
+    // });
+    // const airPassagnerData = tempData.data;
+    // airPassagnerData.columns = ["Date", "Number"];
     console.log("获取过来的数据", airPassagnerData);
 
     // Normalize data with value change
