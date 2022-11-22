@@ -1,3 +1,4 @@
+<!-- 预测最高气温 -->
 <template>
   <div class="button-box">
     <el-button @click="mypredict">预测</el-button>
@@ -9,6 +10,14 @@
         </el-col>
         <el-col :span="8">
           <el-card shadow="hover">{{maxTemp ? maxTemp : '正在预测中...'}}</el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="12">
+        <el-col :span="8">
+          <el-card shadow="always">日期:</el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card shadow="hover">{{time ? time : '正在预测中...'}}</el-card>
         </el-col>
       </el-row>
   </div>
@@ -23,7 +32,7 @@ import * as tfvis from "@tensorflow/tfjs-vis";
 import moment from "moment";
 import apis from "@src/apis";
 import axios from "axios";
-
+// 机器学习 LSTM
 function test() {
   // 利用滑动时间窗口的方法来构建训练数据,用到了以下参数
 
@@ -32,7 +41,7 @@ function test() {
   const STEP_SIZE = 6;
   // 一共要走多少步,Time维度就是24
   // 6 * 24 = 144 数据的总长度
-  const STEP_NUM = 5;
+  const STEP_NUM = 24;
   // 时间窗口向前移动的时候,每次走多少个时间单位,这里每次走一步
   const STEP_OFFSET = 1;
   // 要预测的时间长度,这里表示24个月
@@ -44,9 +53,9 @@ function test() {
 
   const config = { epochs: 30, batchSize: 4 };
 
-  async function loadData(path) {
-    return await d3.csv(path);
-  }
+  // async function loadData(path) {
+  //   return await d3.csv(path);
+  // }
 
   // LSTM模型需要一个三维数据的输入
   // 分别对应Batch（数据是一批一批进入神经网络训练
@@ -166,7 +175,7 @@ function test() {
     // const airPassagnerData = await loadData(
     //   "https://cdn.jsdelivr.net/gh/gangtao/datasets@master/csv/air_passengers.csv"
     // );
-    let tempData = await axios.get(apis.tensorflow);
+    let tempData = await axios.get(apis.tensorflowMaxTemp);
     tempData.data.forEach((item) => {
       item.Number = String(item.Number);
     });
@@ -177,8 +186,6 @@ function test() {
     // Normalize data with value change
     // 标准化数据 -1~1
     let changeData = [];
-    airPassagnerData.splice(30);
-    console.log("截取的数据", airPassagnerData);
     for (let i = 1; i < airPassagnerData.length; i++) {
       const item = {};
       item.date = airPassagnerData[i].Date;
@@ -226,19 +233,20 @@ function test() {
       const date = baseDate.add(1, "day");
       item.time = moment(date).format("YYYY-MM-DD");
       item.value = val + val * prediction[i];
-      item.isPrediction = "Yes";
       predictionValue.push(item);
       val = item.value;
     }
 
     console.log("预测转换后的数据", predictionValue);
     maxTemp.value = Math.floor(predictionValue[0].value);
+    time.value = predictionValue[0].time
   })();
 }
 
-let maxTemp = ref();
+let maxTemp = ref() // 最高气温
+let time = ref() // 日期
 const mypredict = () => {
-  maxTemp.value = test();
+  test();
 };
 </script>
 

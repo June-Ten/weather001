@@ -24,9 +24,17 @@ const routes = [
         component: ()=>import('../components/homeChildren/StatisticsAnalysis/StatisticsAnalysis.vue')
       },
       {
-        path: 'tensorflow',
-        component: ()=>import('../components/homeChildren/tensorflow/Tensorflow.vue')
-      }
+        path: 'predict-maxTemp',
+        component: ()=>import('../components/homeChildren/tensorflow/PredictMaxTemp.vue')
+      },
+      {
+        path: 'predict-minTemp',
+        component: ()=>import('../components/homeChildren/tensorflow/PredictMinTemp.vue')
+      },
+      {
+        path: 'predict-test',
+        component:  ()=>import('../components/homeChildren/tensorflow/Test.vue')
+      },
     ]
   }
 ]

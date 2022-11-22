@@ -59,7 +59,12 @@
     <el-menu-item index="/home/weather-statistic-analysis"
       >天气状况统计分析</el-menu-item
     >
-    <el-menu-item index="/home/tensorflow">Tensorflow</el-menu-item>
+    <el-sub-menu index="/home/tensorflow">
+      <template #title>气温预测</template>
+      <el-menu-item index="/home/predict-maxTemp">最高气温</el-menu-item>
+      <el-menu-item index="/home/predict-minTemp">最低气温</el-menu-item>
+      <el-menu-item index="/home/predict-test">test</el-menu-item>
+    </el-sub-menu>
     <el-menu-item index="/home/4">Processing 4</el-menu-item>
   </el-menu>
   <div class="main">

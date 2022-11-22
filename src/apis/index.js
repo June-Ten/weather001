@@ -4,5 +4,6 @@ axios.defaults.baseURL = 'http://localhost:3000'
 
 export default {
   login: '/login',
-  tensorflow: 'tensorflow',
+  tensorflowMaxTemp: 'tensorflowMaxTemp',
+  tensorflowMinTemp: 'tensorflowMinTemp',
 }
