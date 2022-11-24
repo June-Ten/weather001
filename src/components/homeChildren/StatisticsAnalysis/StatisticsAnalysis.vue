@@ -21,22 +21,35 @@ import Pie from "./Pie.vue";
 import ChinaMap from "./ChinaMap.vue";
 import WindBar from "./WindBar.vue";
 
+
 let visible = ref(false);
 
 // 节流函数
 const throttle = (fn, delay = 200) => {
-  let timer = null;
+  let timer;
   return function () {
     if (timer) {
       return;
     }
     timer = setTimeout(() => {
       fn.apply(this, arguments);
-      timer = true;
+      timer = true; // timer = null是传统写法,这里是只想运行一次
     }, delay);
   };
-};
-window.onscroll = throttle(function () {
+}
+// 防抖
+const debounce = (fn,delay = 200) =>{
+  let timer
+  return function() {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      fn.call(this)
+    }, delay);
+  }
+}
+window.onscroll = debounce(function () {
   if (!visible.value) {
     visible.value = true;
   }
