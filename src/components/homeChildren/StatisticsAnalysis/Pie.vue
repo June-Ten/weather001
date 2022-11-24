@@ -4,9 +4,19 @@
 </template>
 
 <script setup>
-import { inject ,onMounted, reactive} from 'vue'
+import { inject ,onMounted, reactive,ref} from 'vue'
 
 let echarts = inject('echarts')
+onMounted(()=> {
+  initEchart()
+})
+
+const initEchart = () => {
+  let myChart= echarts.init(document.getElementById('pie'))
+  myChart.setOption(option)
+}
+  
+
 
 let data = reactive( [
   {
@@ -105,12 +115,5 @@ let option = {
   ],
 };
 
-onMounted(()=> {
-  initEchart()
-})
 
-const initEchart = () => {
-  let myChart = echarts.init(document.getElementById('pie'))
-  myChart.setOption(option)
-}
 </script>

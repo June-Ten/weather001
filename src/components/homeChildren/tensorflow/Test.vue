@@ -1,25 +1,37 @@
 <template>
-  test
+  <h1>test</h1>
   <el-button @click="startPredict">开始预测</el-button>
   <div class="iframe-box">
     <iframe
-      v-if="iframeVisible"
       src="/tensorflow.html"
       frameborder="0"
       width="100%"
       height="100%"
+      ref="iframeRef"
     ></iframe>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import { ref, onMounted, reactive } from "vue";
+import axios from "axios";
+import apis from "@src/apis";
+
+let iframeRef = ref(null);
+let iframeData = reactive({});
+onMounted(() => {
+  axios.get(apis.tensorflowMaxTemp).then((res) => {
+    arr = res.data;
+    arr.columns = ["Date", "Number"];
+  });
+});
+
+let arr = reactive([]);
 
 // 显示iframe
-const iframeVisible = ref(false)
-const startPredict = ()=> {
-  iframeVisible.value = true
-}
+const startPredict = () => {
+  iframeRef.value.contentWindow.postMessage(arr, "*");
+};
 </script>
 
 <style lang="less" scoped>
