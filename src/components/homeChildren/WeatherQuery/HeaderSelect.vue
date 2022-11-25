@@ -87,16 +87,13 @@ const provinceChange = (value) => {
   let index = provinceList.findIndex((item) => {
     return item.value == value;
   });
-  cityList.value = provinceList[index].cityOptions;
-  
+  // cityList.value = provinceList[index].cityOptions;
+  // 如果使用reactive 不能直接赋值,否则会失去响应式.
+  provinceList[index].cityOptions.map(item=>cityList.push(item))
 };
-//城市 开始是有值,但是是空白
-// let cityList = reactive([{
-//   label:'',
-//   value:'',
-// }]);
-// 开始是No Data
-let cityList = ref([])
+// 城市列表
+let cityList = reactive([])
+// let cityList = ref([])
 const monthList = [
   {
     label: "1",
