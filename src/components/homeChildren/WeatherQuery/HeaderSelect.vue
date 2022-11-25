@@ -1,76 +1,58 @@
 <!-- 天气查询 -->
 <template>
   <div class="title">查询热门城市不同日期的天气数据</div>
-  <div class="select-box">
-    <el-select
-      v-model="provinceValue"
-      class="province-select"
-      placeholder="省份"
-      size="large"
-      @change="provinceChange"
-    >
-      <el-option
-        v-for="item in provinceOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-select
-      v-model="cityValue"
-      class="city-select"
-      placeholder="城市"
-      size="large"
-    >
-      <el-option
-        v-for="item in provinceOptions[provinceOptionsIndex].cityOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-select
-      v-model="monthValue"
-      class="month-select"
-      placeholder="月份"
-      size="large"
-    >
-      <el-option
-        v-for="item in monthOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
-    <el-button
-      size="large"
-      class="queryBtn"
-      type="primary"
-      @click="queryWeahter"
-      >查询</el-button
-    >
+  <div class="el-form-box">
+    <el-form :inline="true" ref="ruleFormRef" :model="ruleForm" :rules="rules">
+      <el-form-item prop="province">
+        <el-select
+          @change="provinceChange"
+          size="large"
+          placeholder="省份"
+          v-model="ruleForm.province"
+        >
+          <el-option
+            v-for="item in provinceList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="city">
+        <el-select size="large" placeholder="城市" v-model="ruleForm.city">
+          <el-option
+            v-for="(item,index) in cityList"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="month">
+        <el-select size="large" placeholder="月份" v-model="ruleForm.month">
+          <el-option
+            v-for="item in monthList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="queryWeather(ruleFormRef)"
+          >查询</el-button
+        >
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, ref,nextTick } from "vue";
 
-// 当一级select省份改变,二级select 城市也会改变
-const provinceChange = (value) => {
-  provinceOptions.map((item, index) => {
-    if (item.value === value) {
-      provinceOptionsIndex.value = index;
-    }
-  });
-  cityValue.value = "";
-};
-
-let provinceValue = ref("");
-let provinceOptionsIndex = ref(0);
-
-let cityValue = ref("");
 // 省份,城市
-const provinceOptions = [
+const provinceList = [
   {
     value: "江苏",
     label: "江苏",
@@ -100,9 +82,22 @@ const provinceOptions = [
     ],
   },
 ];
-
-let monthValue = ref("");
-const monthOptions = [
+// 省份,select,change
+const provinceChange = (value) => {
+  let index = provinceList.findIndex((item) => {
+    return item.value == value;
+  });
+  cityList.value = provinceList[index].cityOptions;
+  
+};
+//城市 开始是有值,但是是空白
+// let cityList = reactive([{
+//   label:'',
+//   value:'',
+// }]);
+// 开始是No Data
+let cityList = ref([])
+const monthList = [
   {
     label: "1",
     value: "1",
@@ -152,9 +147,29 @@ const monthOptions = [
     value: "12",
   },
 ];
-// 天气查询方法
-const queryWeahter = () => {
-  console.log("查询的城市", cityValue.value,'月份',monthValue.value);
+
+const ruleForm = reactive({
+  province: "",
+  city: "",
+  month: "",
+});
+const ruleFormRef = ref();
+// 校验规则
+const rules = reactive({
+  province: [{ required: true, message: "请选择省份", trigger: "blur" }],
+  city: [{ required: true, message: "请选择城市", trigger: "blur" }],
+  month: [{ required: true, message: "请选择月份", trigger: "blur" }],
+});
+// 天气查询先校验再查询
+const queryWeather = async (formEl) => {
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      console.log("submit!");
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
 };
 </script>
 
@@ -167,18 +182,7 @@ const queryWeahter = () => {
   font-weight: 500;
   border-bottom: 1px solid #ccc;
 }
-.select-box {
-  display: flex;
-  align-items: center;
-  height: 80px;
-  .city-select {
-    margin-left: 20px;
-  }
-  .queryBtn {
-    margin-left: 20px;
-  }
-  .month-select {
-    margin-left: 20px;
-  }
+.el-form-box {
+  margin-top: 10px;
 }
 </style>
