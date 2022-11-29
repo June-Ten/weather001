@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { reactive, ref,nextTick } from "vue";
+import { reactive, ref,onMounted } from "vue";
 
 // 省份,城市
 const provinceList = [
@@ -91,64 +91,25 @@ const provinceChange = (value) => {
   // 如果使用reactive 不能直接赋值,否则会失去响应式.
   provinceList[index].cityOptions.map(item=>cityList.push(item))
 };
-// 城市列表
+// 城市列表 reactive是对属性进行追踪的
+// 或者在初始化的时候给出对应的属性
 let cityList = reactive([])
 // let cityList = ref([])
-const monthList = [
-  {
-    label: "1",
-    value: "1",
-  },
-  {
-    label: "2",
-    value: "2",
-  },
-  {
-    label: "3",
-    value: "3",
-  },
-  {
-    label: "4",
-    value: "4",
-  },
-  {
-    label: "5",
-    value: "5",
-  },
-  {
-    label: "6",
-    value: "6",
-  },
-  {
-    label: "7",
-    value: "7",
-  },
-  {
-    label: "8",
-    value: "8",
-  },
-  {
-    label: "9",
-    value: "9",
-  },
-  {
-    label: "10",
-    value: "10",
-  },
-  {
-    label: "11",
-    value: "11",
-  },
-  {
-    label: "12",
-    value: "12",
-  },
-];
 
+let monthList = []
+onMounted(()=> {
+  Array(12).fill(1).map((item,index)=> {
+    let tempItem = {
+      label: index.toString(),
+      value: index.toString(),
+    }
+    monthList.push(tempItem)
+  })
+})
 const ruleForm = reactive({
   province: "",
   city: "",
-  month: "",
+  month: '',
 });
 const ruleFormRef = ref();
 // 校验规则
@@ -162,7 +123,7 @@ const queryWeather = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("submit!");
+      console.log("submit!",ruleForm);
     } else {
       console.log("error submit!", fields);
     }
@@ -180,6 +141,6 @@ const queryWeather = async (formEl) => {
   border-bottom: 1px solid #ccc;
 }
 .el-form-box {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 </style>

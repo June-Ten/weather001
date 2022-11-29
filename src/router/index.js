@@ -35,6 +35,10 @@ const routes = [
         path: 'predict-test',
         component:  ()=>import('../components/homeChildren/tensorflow/Test.vue')
       },
+      {
+        path: 'predict-last',
+        component:  ()=>import('../components/homeChildren/tensorflow/LastResult.vue')
+      },
     ]
   }
 ]

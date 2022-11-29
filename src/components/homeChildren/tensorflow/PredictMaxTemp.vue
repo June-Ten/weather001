@@ -146,6 +146,7 @@ async function trainBatch(data, model) {
   };
 
   const callbacks = tfvis.show.fitCallbacks(container, metrics);
+  // tfvis.Visor.close();
 
   console.log("training start!");
   const epochs = config.epochs;

@@ -64,6 +64,7 @@
       <el-menu-item index="/home/predict-maxTemp">最高气温</el-menu-item>
       <el-menu-item index="/home/predict-minTemp">最低气温</el-menu-item>
       <el-menu-item index="/home/predict-test">test</el-menu-item>
+      <el-menu-item index="/home/predict-last">last</el-menu-item>
     </el-sub-menu>
     <el-menu-item index="/home/4">Processing 4</el-menu-item>
   </el-menu>
