@@ -45,7 +45,7 @@
       <div class="head-title">天气分析与预测系统</div>
       <div class="avatar-box" style="margin-left: 10px; cursor: pointer">
         <el-dropdown>
-          <el-avatar> user </el-avatar>
+          <el-avatar> {{username}} </el-avatar>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
@@ -66,7 +66,7 @@
       <el-menu-item index="/home/predict-test">test</el-menu-item>
       <el-menu-item index="/home/predict-last">last</el-menu-item>
     </el-sub-menu>
-    <el-menu-item index="/home/4">Processing 4</el-menu-item>
+    <el-menu-item index="/home/all">全国城市列表选择</el-menu-item>
   </el-menu>
   <div class="main">
     <router-view></router-view>
@@ -79,11 +79,14 @@ import { useRouter,useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute()
+let username = ref('')
 let activeIndex = ref("");
 // 刷新页面后保持菜单选中状态
 onMounted(async () => {
   await router.isReady();
   activeIndex.value = route.path;
+  let storageUsername = sessionStorage.getItem('username')
+  username.value = storageUsername ==='sys' ? '系统': '普通'
 });
 
 

@@ -4,15 +4,19 @@ import Home from '../components/HomeView.vue'
 
 const routes = [
   {
-    path: '/login',
+    path: '/login', // 登录页
     component: ()=>import('../components/Login.vue')
+  },
+  {
+    path: '/register', // 注册页
+    component: ()=>import('../components/Register.vue')
   },
   {
     path: '/',
     redirect: '/home/weather-query'
   },
   {
-    path: '/home',
+    path: '/home', // 主界面
     component: Home,
     children: [
       {
@@ -38,6 +42,10 @@ const routes = [
       {
         path: 'predict-last',
         component:  ()=>import('../components/homeChildren/tensorflow/LastResult.vue')
+      },
+      {
+        path: 'all',
+        component:  ()=>import('../components/homeChildren/all/All.vue')
       },
     ]
   }

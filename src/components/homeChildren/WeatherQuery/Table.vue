@@ -1,7 +1,7 @@
 <template>
   <el-table
     :data="
-      tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      weatherQueryStore.tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
     "
     style="width: 100%"
   >
@@ -15,288 +15,24 @@
   <el-pagination
     background
     layout="prev, pager, next"
-    :total="tableData.length"
+    :total="weatherQueryStore.tableData.length"
     :page-size="pageSize"
     @current-change="handleCurrentChange"
-    style="display: flex;justify-content: right;margin-top:10px;"
+    style="display: flex; justify-content: right; margin-top: 10px"
   />
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
+import {useQueryTableData} from '@src/store/weatherQueryTableData.js'
 
-let currentPage = ref(1);
-let pageSize = ref(10);
+const weatherQueryStore = useQueryTableData()
 
-const handleCurrentChange = (currentPageArg)=> {
-  console.log('currentPage',currentPageArg)
+let currentPage = ref(1)
+let pageSize = ref(10)
+
+const handleCurrentChange = (currentPageArg) => {
+  console.log('currentPage', currentPageArg)
   currentPage.value = currentPageArg
 }
-
-const tableData = [
-  {
-    date: "2022-05-03",
-    week: "周五",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周五",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周五",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周四",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周一",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周五",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周五",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-  {
-    date: "2022-05-03",
-    week: "周五",
-    maxTemp: "30",
-    minTemp: "30",
-    weather: "多云",
-    windDirection: "北风3级",
-  },
-];
 </script>

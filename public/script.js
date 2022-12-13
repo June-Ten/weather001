@@ -1,17 +1,16 @@
 window.addEventListener(
   'message',
   function (e) {
-    // startPredict(e.data)
-    console.log('从vue发送过来的数据',e.data)
+    startPredict(e.data)
+    console.log('从vue发送过来的数据', e.data)
   },
   '*'
 )
 const button = document.getElementsByClassName('iframe')[0]
-button.addEventListener('click',function() {
+button.addEventListener('click', function () {
   console.log('button')
   window.parent.postMessage('iframe发送的信息')
 })
-
 
 const STEP_SIZE = 6
 const STEP_NUM = 24
@@ -127,6 +126,8 @@ async function trainBatch(data, model) {
   }
 
   const callbacks = tfvis.show.fitCallbacks(container, metrics)
+  // 过程 不显示 可视化
+  // const callbacks = tfvis.show.fitCallbacks(container, metrics,opts)
 
   console.log('training start!')
   const epochs = config.epochs
@@ -138,12 +139,15 @@ async function trainBatch(data, model) {
     batchSize: config.batchSize,
     epochs: config.epochs,
     validationSplit: 0.2,
-    callbacks:[callbacks, {
-      onEpochEnd: (epoch, log) => {
-        // display loss
-        console.log(epoch, log.loss);
-      }
-    }],
+    callbacks: [
+      callbacks,
+      {
+        onEpochEnd: (epoch, log) => {
+          // display loss
+          console.log(epoch, log.loss)
+        },
+      },
+    ],
   })
 
   console.log('training complete!')
@@ -244,7 +248,7 @@ async function startPredict(rawData) {
     const item = {}
     const date = baseDate.add(1, 'day')
     item.time = moment(date).format('YYYY-MM-DD')
-    item.value = val + val * prediction[i] // -100 
+    item.value = val + val * prediction[i] // -100
     item.isPrediction = 'Yes'
     predictionValue.push(item)
     val = item.value

@@ -54,7 +54,7 @@
       :rules="rules"
       label-width="120px"
       class="demo-ruleForm"
-      :size="formSize"
+      size="default"
       status-icon
     >
       <el-form-item label="用户名:" prop="username">
@@ -67,55 +67,61 @@
         <el-button type="primary" @click="submitForm(ruleFormRef)"
           >登录</el-button
         >
-        <el-button @click="visitorLogin">游客登录</el-button>
+        <el-button @click="register">去注册</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import apis from '@src/apis/index.js'
-
-
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
- 
-const formSize = ref("default");
-const ruleFormRef = ref();
+
+const ruleFormRef = ref()
 const ruleForm = reactive({
-  username: "",
-  password: "",
-});
+  username: '',
+  password: '',
+})
 
 const rules = reactive({
-  username: [{ required: true, message: "请输入用户名!", trigger: "blur" }],
-  password: [{ required: true, message: "请输入密码!", trigger: "blur" }],
-});
+  username: [{ required: true, message: '请输入用户名!', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码!', trigger: 'blur' }],
+})
 
 const submitForm = async (formEl) => {
-  if (!formEl) return;
+  if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("submit!",ruleForm);
-      // axios.post(apis.login,ruleForm).then((res)=> {
-      //   console.log('res',res)
-      //   if (res.data.success ) {
-      //     router.push('/')
-      //   }
-      // })
-      router.push('/')
+      axios.post(apis.login, ruleForm).then((res) => {
+        const { success, username='',msg='',} = res
+        if (success) {
+          ElMessage({
+            message: '登录成功',
+            type: 'success',
+          })
+          sessionStorage.setItem('username', username)
+          router.push('/')
+        } else {
+          ElMessage({
+            message: msg,
+            type: 'error',
+          })
+        }
+      })
     } else {
-      console.log("error submit!", fields);
+      console.log('error submit!', fields)
     }
-  });
-};
+  })
+}
 
-// 游客登录
-const visitorLogin = () => {
-  router.push('/')
+// 注册
+const register = () => {
+  router.push('/register')
 }
 </script>
 
@@ -128,7 +134,7 @@ const visitorLogin = () => {
   padding-left: 30%;
   width: 100%;
   height: 100%;
-  background-image: url("../assets/image/login_background.png");
+  background-image: url('../assets/image/login_background.png');
   background-size: cover;
 }
 </style>
