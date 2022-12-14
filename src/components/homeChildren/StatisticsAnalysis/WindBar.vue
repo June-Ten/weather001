@@ -4,77 +4,97 @@
 </template>
 
 <script setup>
-import { inject, onMounted, reactive } from "vue";
+import axios from 'axios'
+import apis from '@src/apis'
+import { inject, onMounted, reactive } from 'vue'
 
-const echarts = inject("echarts");
+const echarts = inject('echarts')
 onMounted(() => {
-  initEchart();
-});
+  // initEchart()
+  getWindBar()
+})
 
 const initEchart = () => {
-  let myChart = echarts.init(document.getElementById("bar-box"));
-  myChart.setOption(option);
-};
+  let myChart = echarts.init(document.getElementById('bar-box'))
+  myChart.setOption(option)
+  window.onresize = function () {
+    twChart.resize()
+  }
+}
+
+const getWindBar = () => {
+  let params = {
+    city: '南京',
+  }
+  axios.get(apis.windStat, { params: params }).then((res) => {
+    const { success = false, data = [] } = res
+    console.log('res', res)
+    option.dataset.source = data
+    initEchart()
+  })
+}
 
 let data = reactive([
   {
-    name: "Mon",
+    name: 'Mon',
     value: 120,
   },
   {
-    name: "Tue",
+    name: 'Tue',
     value: 200,
   },
   {
-    name: "Wed",
+    name: 'Wed',
     value: 150,
   },
   {
-    name: "Thu",
+    name: 'Thu',
     value: 80,
   },
   {
-    name: "Fri",
+    name: 'Fri',
     value: 70,
   },
   {
-    name: "Sat",
+    name: 'Sat',
     value: 110,
   },
   {
-    name: "Sun",
+    name: 'Sun',
     value: 130,
   },
-]);
+])
 
 const option = {
   title: {
-    text: "风向统计",
-    x: "center",
+    text: '风向统计',
+    x: 'center',
   },
   tooltip: {
     show: true,
-    trigger: "item",
+    trigger: 'item',
     formatter: function (params) {
-      return params.data.name + ":" + params.data.value;
+      return params.data.name + ':' + params.data.value
     },
   },
   xAxis: {
     show: true,
-    type: "value",
+    type: 'value',
   },
   yAxis: {
-    type: "category",
+    type: 'category',
   },
+  grid: {
+          left: '20%',//原来是10%，修改为20%
+        },
   dataset: {
     source: data,
   },
   series: [
     {
-      type: "bar",
+      type: 'bar',
+      barWidth: '90%',
     },
   ],
-};
+}
 </script>
-
-<style lang="less" scoped></style>

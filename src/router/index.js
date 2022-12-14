@@ -25,7 +25,7 @@ const routes = [
       },
       {
         path: 'weather-statistic-analysis',
-        component: ()=>import('../components/homeChildren/StatisticsAnalysis/StatisticsAnalysis.vue')
+        component: ()=>import('../components/homeChildren/StatisticsAnalysis/index.vue')
       },
       {
         path: 'predict-maxTemp',
