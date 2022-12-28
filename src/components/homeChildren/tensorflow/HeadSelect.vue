@@ -1,12 +1,27 @@
-<!-- 最终结果 -->
+<!-- 天气查询 -->
 <template>
   <div class="title">基于时间序列的天气预测</div>
   <div class="el-form-box">
     <el-form :inline="true" ref="ruleFormRef" :model="ruleForm" :rules="rules">
-      <el-form-item prop="year">
-        <el-select size="large" placeholder="年份" v-model="ruleForm.year">
+      <el-form-item prop="province">
+        <el-select
+          @change="onChange"
+          v-model="ruleForm.province"
+          placeholder="省份"
+          size="large"
+        >
           <el-option
-            v-for="item in yearList"
+            v-for="item in provinceAndCityData"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="city">
+        <el-select v-model="ruleForm.city" placeholder="城市" size="large">
+          <el-option
+            v-for="item in cityList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -40,48 +55,95 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="queryWeather(ruleFormRef)"
-          >预测天气数据</el-button
+          >查询</el-button
         >
       </el-form-item>
     </el-form>
   </div>
-  <div class="el-table-box">
-    <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="label" label="标签" width="180" />
-      <el-table-column prop="date" label="Date" width="180" />
-      <el-table-column prop="name" label="Name" width="180" />
-      <el-table-column prop="address" label="Address" />
-    </el-table>
-  </div>
+  <el-progress
+    type="circle"
+    :percentage="percentage"
+    :status="status"
+    v-if="progressVisible"
+  />
 </template>
 
 <script setup>
+import { reactive, ref, watch } from 'vue'
+import { usePredictTemp } from '@src/store/predictTemp.js'
+import { provinceAndCityData, CodeToText } from 'element-china-area-data'
 import axios from 'axios'
 import apis from '@src/apis'
-import { reactive, ref } from 'vue'
 import * as tf from '@tensorflow/tfjs'
 import * as tfvis from '@tensorflow/tfjs-vis'
 import moment from 'moment'
 
-let yearList = [
+const predictTempStore = usePredictTemp()
+
+// 省份,城市
+let province = ref('')
+let city = ref('')
+let cityList = ref()
+const onChange = (value) => {
+  city.value = ''
+  let tempIndex = provinceAndCityData.findIndex((item) => {
+    return value === item.value
+  })
+  cityList.value = provinceAndCityData[tempIndex].children
+}
+
+// 月份
+const monthList = [
   {
-    value: '2021',
-    label: '2021',
+    label: '1',
+    value: '01',
   },
   {
-    value: '2022',
-    label: '2022',
+    label: '2',
+    value: '02',
+  },
+  {
+    label: '3',
+    value: '03',
+  },
+  {
+    label: '4',
+    value: '04',
+  },
+  {
+    label: '5',
+    value: '05',
+  },
+  {
+    label: '6',
+    value: '06',
+  },
+  {
+    label: '7',
+    value: '07',
+  },
+  {
+    label: '8',
+    value: '08',
+  },
+  {
+    label: '9',
+    value: '09',
+  },
+  {
+    label: '10',
+    value: '10',
+  },
+  {
+    label: '11',
+    value: '11',
+  },
+  {
+    label: '12',
+    value: '12',
   },
 ]
-let monthList = []
 let dayList = reactive([])
-
-for (let i = 0; i < 12; i++) {
-  monthList.push({
-    label: (i + 1).toString(),
-    value: i < 9 ? '0' + (i + 1).toString() : (i + 1).toString(),
-  })
-}
 //month select change
 const monthChange = (value) => {
   let numberMonth = Number(value)
@@ -107,30 +169,77 @@ const monthChange = (value) => {
 }
 
 const ruleForm = reactive({
-  year: '',
+  province,
+  city,
   month: '',
   day: '',
 })
 const ruleFormRef = ref()
 // 校验规则
 const rules = reactive({
-  year: [{ required: true, message: '请选择年份', trigger: 'blur' }],
+  province: [{ required: true, message: '请选择省份', trigger: 'blur' }],
+  city: [{ required: true, message: '请选择城市', trigger: 'blur' }],
   month: [{ required: true, message: '请选择月份', trigger: 'blur' }],
-  day: [{ required: true, message: '请选择月份', trigger: 'blur' }],
+  day: [{ required: true, message: '请选择日期', trigger: 'blur' }],
 })
+
+
+let rawData = ref([])
+let rawDate = ref('') // 预测的日期
+let rawMaxTemp = ref(0) // 真实最高气温
+let rawMinTemp = ref(0) // 真实最低气温
+let predictMaxTemp = ref(0) // 预测最高气温
+let predictMinTemp = ref(0) // 预测最低气温
 // 天气查询先校验再查询
 const queryWeather = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log('submit!', ruleForm)
       let params = {
-        endDay: ruleForm.year + '-' + ruleForm.month + '-' + ruleForm.day,
+        city: CodeToText[ruleForm.city],
+        endDay: '2021-' + ruleForm.month + '-' + ruleForm.day,
       }
-      axios.get(apis.tensorflowMaxTemp, { params: params }).then((res) => {
-        const { success, data } = res
+      axios.get(apis.predictTemp, { params: params }).then((res) => {
+        console.log('获取来的原始气温数据', res)
+        const { success = false, data } = res
         if (success) {
-          startPredict(data.slice(0, 144))
+          rawData.value = data
+          rawMaxTemp.value = Number(data.at(-1)['maxNumber'])
+          rawMinTemp.value = Number(data.at(-1)['minNumber'])
+          rawDate.value = data.at(-1)['Date']
+          let maxList = [] // 最高温度
+          data.slice(0, 144).forEach((item) => {
+            maxList.push({
+              Date: item['Date'],
+              Number: item['maxNumber'],
+            })
+          })
+          maxList.columns = ['Date', 'Number']
+          let minList = [] // 最低温度
+          data.slice(0, 144).forEach((item) => {
+            minList.push({
+              Date: item['Date'],
+              Number: item['minNumber'],
+            })
+          })
+          maxList.columns = ['Date', 'Number']
+          startPredict(maxList).then((res) => {
+            console.log('预测最高气温', res)
+            predictMaxTemp.value = parseInt(res[0].value)
+            startPredict(minList).then((res) => {
+              console.log('预测最低气温', res)
+              predictMinTemp.value = parseInt(res[0].value)
+              predictTempStore.getTableData(
+                rawDate.value,
+                rawMaxTemp.value,
+                rawMinTemp.value,
+                predictMaxTemp.value,
+                predictMinTemp.value,
+                predictMinTemp.value,
+                predictMaxTemp.value
+              )
+            })
+          })
         }
       })
     } else {
@@ -139,40 +248,13 @@ const queryWeather = async (formEl) => {
   })
 }
 
-const tableData = [
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-02',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-04',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-]
-// tableData.forEach((item, index) => {
-//   switch (index) {
-//     case 0:
-//       item.label = '模型预测'
-//       break
-//     case 1:
-//       item.label = '实际结果'
-//       break
-//     case 2:
-//       item.label = '预测评估'
-//       break
-//     default:
-//       break
-//   }
-// })
+// el-progress
+let percentageCount = ref(0)
+let percentage = ref(0)
+let status = ref('')
+let progressVisible = ref(false)
 
-// tensorflow.js 部分
+// tensorflow.js 预测部分
 const STEP_SIZE = 6
 const STEP_NUM = 24
 const STEP_OFFSET = 1
@@ -285,7 +367,7 @@ async function trainBatch(data, model) {
   // const callbacks = tfvis.show.fitCallbacks(container, metrics)
   // 过程 不显示 可视化
   const callbacks = tfvis.show.fitCallbacks(container, metrics, opts)
-
+  tfvis.visor().close() // 不显示遮阳板
   console.log('training start!')
   const epochs = config.epochs
   const results = []
@@ -302,6 +384,15 @@ async function trainBatch(data, model) {
         onEpochEnd: (epoch, log) => {
           // display loss
           console.log(epoch, log.loss)
+          percentageCount.value++
+          percentage.value = parseInt((percentageCount.value / 60) * 100)
+          progressVisible.value = true
+          if (percentageCount.value === 60) {
+            status.value = 'success'
+            setTimeout(() => {
+              progressVisible.value = false
+            }, 3000)
+          }
         },
       },
     ],
@@ -363,17 +454,13 @@ async function startPredict(rawData) {
     const item = {}
     const date = baseDate.add(1, 'day')
     item.time = moment(date).format('YYYY-MM-DD')
-    item.value = val + val * prediction[i] // -100
+    item.value = val + val * prediction[i]-100 // -100
     item.isPrediction = 'Yes'
     predictionValue.push(item)
     val = item.value
   }
 
-  console.log(predictionValue)
-  let airPassagnerDataWithPrediction = []
-  predictionValue.forEach((item) => {
-    airPassagnerDataWithPrediction.push(item)
-  })
+  return predictionValue
 }
 </script>
 

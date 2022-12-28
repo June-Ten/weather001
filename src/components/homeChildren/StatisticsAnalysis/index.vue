@@ -1,71 +1,57 @@
 <!-- 天气状况统计分析 -->
 <template>
-  <div class="chinaMap-box">
-    <div class="chinaMap">
-      <ChinaMap></ChinaMap>
-    </div>
-  </div>
+  <HeaderSelector></HeaderSelector>
   <div class="pieAndBar-box">
-    <div class="pie">
-      <Pie v-if="visible"></Pie>
+    <div class="pie" v-if="statAnalStore.pieData.success">
+      <Pie></Pie>
     </div>
-    <div class="bar">
-      <WindBar v-if="visible"></WindBar>
+    <div class="bar" v-if="statAnalStore.windBarData.success">
+      <WindBar></WindBar>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import Pie from "./Pie.vue";
-import ChinaMap from "./ChinaMap.vue";
-import WindBar from "./WindBar.vue";
+import HeaderSelector from './HeaderSelect.vue'
+import Pie from './Pie.vue'
+import WindBar from './WindBar.vue'
+import { useStatAnalStore } from '@src/store/statisticsAnalysis.js'
 
+const statAnalStore = useStatAnalStore()
 
-let visible = ref(false);
-
-// 节流函数
-const throttle = (fn, delay = 200) => {
-  let timer;
-  return function () {
-    if (timer) {
-      return;
-    }
-    timer = setTimeout(() => {
-      fn.apply(this, arguments);
-      timer = true; // timer = null是传统写法,这里是只想运行一次
-    }, delay);
-  };
-}
-// 防抖
-const debounce = (fn,delay = 200) =>{
-  let timer
-  return function() {
-    if (timer) {
-      clearTimeout(timer)
-    }
-    timer = setTimeout(() => {
-      fn.call(this)
-    }, delay);
-  }
-}
-window.onscroll = debounce(function () {
-  if (!visible.value) {
-    visible.value = true;
-  }
-}, 400);
+// // 节流函数
+// const throttle = (fn, delay = 200) => {
+//   let timer
+//   return function () {
+//     if (timer) {
+//       return
+//     }
+//     timer = setTimeout(() => {
+//       fn.apply(this, arguments)
+//       timer = true // timer = null是传统写法,这里是只想运行一次
+//     }, delay)
+//   }
+// }
+// // 防抖
+// const debounce = (fn, delay = 200) => {
+//   let timer
+//   return function () {
+//     if (timer) {
+//       clearTimeout(timer)
+//     }
+//     timer = setTimeout(() => {
+//       fn.call(this)
+//     }, delay)
+//   }
+// }
+// window.onscroll = debounce(function () {
+//   if (!visible.value) {
+//     visible.value = true
+//   }
+// }, 400)
 </script>
 
 <style lang="less" scoped>
-.chinaMap-box {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  .chinaMap {
-    width: 800px;
-    height: 500px;
-  }
-}
 .pieAndBar-box {
   display: flex;
   margin-top: 100px;

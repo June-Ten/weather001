@@ -7,6 +7,9 @@
 import axios from 'axios'
 import apis from '@src/apis'
 import { inject, onMounted, reactive } from 'vue'
+import { useStatAnalStore } from '@src/store/statisticsAnalysis.js'
+
+const statAnalStore = useStatAnalStore()
 
 const echarts = inject('echarts')
 onMounted(() => {
@@ -18,20 +21,23 @@ const initEchart = () => {
   let myChart = echarts.init(document.getElementById('bar-box'))
   myChart.setOption(option)
   window.onresize = function () {
-    twChart.resize()
+    myChart.resize()
   }
 }
 
 const getWindBar = () => {
-  let params = {
-    city: '南京',
-  }
-  axios.get(apis.windStat, { params: params }).then((res) => {
-    const { success = false, data = [] } = res
-    console.log('res', res)
-    option.dataset.source = data
+  // let params = {
+  //   city: '南京市',
+  //   year: '2021',
+  // }
+  // axios.get(apis.windStat, { params: params }).then((res) => {
+  //   const { success = false, data = [] } = res
+  //   console.log('res', res)
+  //   option.dataset.source = data
+  //   initEchart()
+  // })
+    option.dataset.source = statAnalStore.windBarData.data
     initEchart()
-  })
 }
 
 let data = reactive([

@@ -18,6 +18,7 @@ export default {
   waterNumber: '/waterNumber', // 全国降水量
   weatherTypeStat: '/weatherTypeStat', // 天气分布统计 饼图
   windStat: '/windStat', // 风向统计 水平柱状图
-  tensorflowMaxTemp: 'tensorflowMaxTemp',
-  tensorflowMinTemp: 'tensorflowMinTemp',
+  predictTemp: '/predictTemp', // 气温预测
+  tensorflowMaxTemp: '/tensorflowMaxTemp',
+  tensorflowMinTemp: '/tensorflowMinTemp',
 }

@@ -1,6 +1,6 @@
-<!-- 天气查询 -->
+<!-- 天气状况统计分析 -->
 <template>
-  <div class="title">查询热门城市不同日期的天气数据</div>
+  <div class="title">查询热门城市的天气状况统计分析</div>
   <div class="el-form-box">
     <el-form :inline="true" ref="ruleFormRef" :model="ruleForm" :rules="rules">
       <el-form-item prop="province">
@@ -28,10 +28,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="month">
-        <el-select size="large" placeholder="月份" v-model="ruleForm.month">
+      <el-form-item prop="year">
+        <el-select size="large" placeholder="年份" v-model="ruleForm.year">
           <el-option
-            v-for="item in monthList"
+            v-for="item in yearList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -49,10 +49,10 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { useQueryTableData } from '@src/store/weatherQueryTableData.js'
 import { provinceAndCityData,CodeToText } from 'element-china-area-data'
+import { useStatAnalStore } from '@src/store/statisticsAnalysis.js'
 
-const weatherQueryStore = useQueryTableData()
+const statAnalStore = useStatAnalStore()
 
 // 省份,城市
 let province = ref('')
@@ -66,77 +66,29 @@ const onChange = (value) => {
   cityList.value = provinceAndCityData[tempIndex].children
 }
 
-// 月份
-const monthList = [
+// 年份
+const yearList = [
   {
-    label: '1',
-    value: '01',
+    label: '2021',
+    value: '2021',
   },
   {
-    label: '2',
-    value: '02',
-  },
-  {
-    label: '3',
-    value: '03',
-  },
-  {
-    label: '4',
-    value: '04',
-  },
-  {
-    label: '5',
-    value: '05',
-  },
-  {
-    label: '6',
-    value: '06',
-  },
-  {
-    label: '7',
-    value: '07',
-  },
-  {
-    label: '2',
-    value: '02',
-  },
-  {
-    label: '8',
-    value: '08',
-  },
-  {
-    label: '9',
-    value: '09',
-  },
-  {
-    label: '10',
-    value: '10',
-  },
-  {
-    label: '11',
-    value: '11',
-  },
-  {
-    label: '2',
-    value: '02',
-  },
-  {
-    label: '12',
-    value: '12',
+    label: '2022',
+    value: '2022',
   },
 ]
 
 const ruleForm = reactive({
   province,
   city,
-  month: '',
+  year:'',
 })
 const ruleFormRef = ref()
 // 校验规则
 const rules = reactive({
   province: [{ required: true, message: '请选择省份', trigger: 'blur' }],
   city: [{ required: true, message: '请选择城市', trigger: 'blur' }],
-  month: [{ required: true, message: '请选择月份', trigger: 'blur' }],
+  year: [{ required: true, message: '请选择年份', trigger: 'blur' }],
 })
 
 // 天气查询先校验再查询
@@ -144,9 +96,9 @@ const queryWeather = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      weatherQueryStore.getTableData({
+      statAnalStore.getStatAnal({
         city: CodeToText[ruleForm.city],
-        month: ruleForm.month,
+        year: ruleForm.year,
       })
     } else {
       console.log('error submit!', fields)

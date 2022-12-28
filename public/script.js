@@ -1,21 +1,22 @@
+// 监听父级页面传递的数据
 window.addEventListener(
   'message',
   function (e) {
     startPredict(e.data)
-    console.log('从vue发送过来的数据', e.data)
+    console.log('vue => iframe', e.data)
   },
   '*'
 )
-const button = document.getElementsByClassName('iframe')[0]
-button.addEventListener('click', function () {
-  console.log('button')
-  window.parent.postMessage('iframe发送的信息')
-})
+// const button = document.getElementsByClassName('iframe')[0]
+// button.addEventListener('click', function () {
+//   console.log('button')
+//   // window.parent.postMessage('1000')
+// })
 
 const STEP_SIZE = 6
 const STEP_NUM = 24
 const STEP_OFFSET = 1
-const TARGET_SIZE = 24
+const TARGET_SIZE = 7
 const LSTM_UNITS = 30
 
 const X_LEN = STEP_SIZE + STEP_OFFSET * (STEP_NUM - 1)
@@ -125,9 +126,9 @@ async function trainBatch(data, model) {
     callbacks: [],
   }
 
-  const callbacks = tfvis.show.fitCallbacks(container, metrics)
+  // const callbacks = tfvis.show.fitCallbacks(container, metrics)
   // 过程 不显示 可视化
-  // const callbacks = tfvis.show.fitCallbacks(container, metrics,opts)
+  const callbacks = tfvis.show.fitCallbacks(container, metrics,opts)
 
   console.log('training start!')
   const epochs = config.epochs
@@ -145,6 +146,8 @@ async function trainBatch(data, model) {
         onEpochEnd: (epoch, log) => {
           // display loss
           console.log(epoch, log.loss)
+          // 向父页面 vue 传递数据
+          window.parent.postMessage(epoch.toString(),"*")
         },
       },
     ],
@@ -155,13 +158,13 @@ async function trainBatch(data, model) {
 }
 
 async function startPredict(rawData) {
-  const airPassagnerData = await loadData(
-    'https://cdn.jsdelivr.net/gh/gangtao/datasets@master/csv/air_passengers.csv'
-  )
-  // rawData.forEach((item)=> {
-  //   item.Number = String(Number(item.Number)+100)
-  // })
-  // const airPassagnerData = rawData;
+  // const airPassagnerData = await loadData(
+  //   'https://cdn.jsdelivr.net/gh/gangtao/datasets@master/csv/air_passengers.csv'
+  // )
+  rawData.forEach((item)=> {
+    item.Number = String(Number(item.Number)+100)
+  })
+  const airPassagnerData = rawData;
 
   console.log('获取的原始数据', airPassagnerData)
 
@@ -255,8 +258,5 @@ async function startPredict(rawData) {
   }
 
   console.log(predictionValue)
-  let airPassagnerDataWithPrediction = []
-  predictionValue.forEach((item) => {
-    airPassagnerDataWithPrediction.push(item)
-  })
+  window.parent.postMessage(predictionValue,"*")
 }

@@ -1,15 +1,16 @@
 <!-- 中国地图 -->
 <template>
-  <div style="width: 100%; height: 100%" id="china">china</div>
+  <div style="width: 100%; height: 100%" id="china"></div>
 </template>
 
 <script setup>
-import axios from 'axios'
-import apis from '@src/apis'
 import { inject, onMounted,reactive } from 'vue'
 import china from './china.json'
+import { usePrecipitationStore } from '@src/store/precipitation.js'
+
+const precipitationStore = usePrecipitationStore()
+
 onMounted(() => {
-  // initEchart()
   getWaterNumber()
 })
 
@@ -18,14 +19,13 @@ const echarts = inject('echarts')
 const initEchart = () => {
   echarts.registerMap('china', china)
   let myChart = echarts.init(document.getElementById('china'))
-  // console.log(option);
   myChart.setOption(option)
 }
 
 // 全国降水量
 const getWaterNumber = () => {
-  axios.get(apis.waterNumber).then((res) => {
-    const { success = false, data = [] } = res
+  // axios.get(apis.waterNumber).then((res) => {
+    const { success = false, data = [] } = precipitationStore.precipitationData
     // console.log('res', res)
     if (success) {
       dataList = data.map((item) => {
@@ -38,7 +38,7 @@ const getWaterNumber = () => {
       // console.log('dataList.value', dataList)
       initEchart()
     }
-  })
+  // })
 }
 let dataList = reactive([])
 
@@ -246,6 +246,7 @@ let option = reactive({
     {
       name: '中国地图',
       type: 'map',
+      animation:true,
       geoIndex: 0,
       data: dataList,
     },

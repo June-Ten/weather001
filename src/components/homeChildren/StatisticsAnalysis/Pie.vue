@@ -4,11 +4,13 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import apis from '@src/apis'
-import { inject, onMounted, reactive, ref } from 'vue'
+import { inject, onMounted, reactive } from 'vue'
+import { useStatAnalStore } from '@src/store/statisticsAnalysis.js'
+
+const statAnalStore = useStatAnalStore()
 
 let echarts = inject('echarts')
+
 onMounted(() => {
   getPieData()
 })
@@ -19,22 +21,16 @@ const initEchart = () => {
 }
 
 const getPieData = () => {
-  let params = {
-    city: '南京'
-  }
-  axios.get(apis.weatherTypeStat,{params:params}).then((res) => {
-    const { success = false, data = [], typeData = [] } = res
-    if (success) {
-      option.series[0].data = data
-      option.series[1].data = data
-      option.legend.data = typeData
-      initEchart()
-    }
-  })
+  const { data = [], typeData = [] } = statAnalStore.pieData
+  option.series[0].data = data
+  option.series[1].data = data
+  option.legend.data = typeData
+  initEchart()
 }
 
 let pieTypeData = reactive([])
 let pieData = reactive([])
+
 // reactive([
 //   {
 //     value: 120,
@@ -57,11 +53,12 @@ let pieData = reactive([])
 //     name: '雪',
 //   },
 // ])
+
 let option = reactive({
   backgroundColor: '#fff',
   title: {
     text: '天气分布',
-    subtext: '2021年',
+    // subtext: `${}`,
     x: 'center',
     y: 'center',
     textStyle: {
@@ -84,7 +81,7 @@ let option = reactive({
       type: 'pie',
       selectedMode: 'single',
       radius: ['25%', '58%'],
-      color: ['#86D560', '#AF89D6', '#59ADF3', '#FF999A', '#FFCC67'],
+      color: ['#86D560', '#AF89D6', '#59ADF3', '#FF999A', '#FFCC67','#C45A65'],
 
       label: {
         normal: {
