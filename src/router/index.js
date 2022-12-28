@@ -57,6 +57,10 @@ const routes = [
         path: 'predict-temp', // 气温预测
         component: () => import('../components/homeChildren/tensorflow/index.vue'),
       },
+      {
+        path: 'manage-user', // 用户管理
+        component: () => import('../components/homeChildren/manageUser/index.vue'),
+      },
     ],
   },
 ]

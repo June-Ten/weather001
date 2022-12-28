@@ -61,6 +61,7 @@
     >
     <el-menu-item index="/home/precipitation">全国降水量</el-menu-item>
     <el-menu-item index="/home/predict-temp">气温预测</el-menu-item>
+    <el-menu-item index="/home/manage-user">用户管理</el-menu-item>
     <el-sub-menu index="/home/tensorflow">
       <template #title>气温预测</template>
       <el-menu-item index="/home/predict-maxTemp">最高气温</el-menu-item>

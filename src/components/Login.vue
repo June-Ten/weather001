@@ -61,7 +61,7 @@
         <el-input v-model="ruleForm.username" />
       </el-form-item>
       <el-form-item label="用户密码:" prop="password">
-        <el-input v-model="ruleForm.password" />
+        <el-input v-model="ruleForm.password" type="password"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)"

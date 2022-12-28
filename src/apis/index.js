@@ -19,6 +19,9 @@ export default {
   weatherTypeStat: '/weatherTypeStat', // 天气分布统计 饼图
   windStat: '/windStat', // 风向统计 水平柱状图
   predictTemp: '/predictTemp', // 气温预测
+  manageUser: '/manageUser', // 用户管理
+  updateUserStatus: '/updateUserStatus', // 更新用户状态
+  deleteUser: '/deleteUser', // 删除用户
   tensorflowMaxTemp: '/tensorflowMaxTemp',
   tensorflowMinTemp: '/tensorflowMinTemp',
 }
