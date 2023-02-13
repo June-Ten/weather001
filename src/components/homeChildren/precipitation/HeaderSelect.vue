@@ -1,6 +1,7 @@
 <!-- 天气状况统计分析 -->
 <template>
   <div class="title">查询各年份的全国各省降水量</div>
+  <el-button @click="openNewTagw">空气质量大屏可视化</el-button>
   <div class="el-form-box">
     <el-form :inline="true" ref="ruleFormRef" :model="ruleForm" :rules="rules">
       <el-form-item prop="year">
@@ -27,6 +28,10 @@ import { reactive, ref } from 'vue'
 import { usePrecipitationStore } from '@src/store/precipitation.js'
 
 const precipitationStore = usePrecipitationStore()
+
+const openNewTagw = () => {
+  window.open(window.origin+'/big-screen')
+}
 
 
 // 年份

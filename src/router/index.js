@@ -61,7 +61,15 @@ const routes = [
         path: 'manage-user', // 用户管理
         component: () => import('../components/homeChildren/manageUser/index.vue'),
       },
+      {
+        path: 'weather-predict', // 天气预测
+        component: () => import('../components/homeChildren/weatherPredict/index.vue'),
+      },
     ],
+  },
+  {
+    path: '/big-screen', // 空气质量大屏可视化
+    component: () => import('../components/homeChildren/airQuality/index.vue'),
   },
 ]
 

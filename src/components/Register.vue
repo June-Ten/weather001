@@ -1,4 +1,4 @@
-<!-- 注册 -->
+<!-- 注册页 -->
 <template>
   <div class="register-form">
     <div class="register-text">注册页面</div>

@@ -1,3 +1,4 @@
+<!-- 天气查询表格 -->
 <template>
   <HeaderSelect></HeaderSelect>
   <Table></Table>

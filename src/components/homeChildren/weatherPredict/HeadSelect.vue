@@ -1,6 +1,7 @@
 <!-- 天气查询 -->
 <template>
-  <div class="title">查询热门城市不同日期的天气数据</div>
+  <div>
+  <div class="title">基于时间序列的天气预测</div>
   <div class="el-form-box">
     <el-form :inline="true" ref="ruleFormRef" :model="ruleForm" :rules="rules">
       <el-form-item prop="province">
@@ -29,9 +30,24 @@
         </el-select>
       </el-form-item>
       <el-form-item prop="month">
-        <el-select size="large" placeholder="月份" v-model="ruleForm.month">
+        <el-select
+          size="large"
+          placeholder="月份"
+          v-model="ruleForm.month"
+          @change="monthChange"
+        >
           <el-option
             v-for="item in monthList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="day">
+        <el-select size="large" placeholder="日期" v-model="ruleForm.day">
+          <el-option
+            v-for="item in dayList"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -45,14 +61,24 @@
       </el-form-item>
     </el-form>
   </div>
+  <!-- <el-progress
+    type="circle"
+    :percentage="percentage"
+    :status="status"
+    v-if="progressVisible"
+  /> -->
+</div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-import { useQueryTableData } from '@src/store/weatherQueryTableData.js'
-import { provinceAndCityData,CodeToText } from 'element-china-area-data'
+import { reactive, ref,defineEmits  } from 'vue'
+import { provinceAndCityData, CodeToText } from 'element-china-area-data'
+import axios from 'axios'
+import apis from '@src/apis'
 
-const weatherQueryStore = useQueryTableData()
+
+const props = defineProps(['rawData'])
+const emit = defineEmits('changeData')
 
 // 省份,城市
 let province = ref('')
@@ -117,11 +143,36 @@ const monthList = [
     value: '12',
   },
 ]
+let dayList = reactive([])
+//month select change
+const monthChange = (value) => {
+  let numberMonth = Number(value)
+  let dayTotal = 0
+  // 31天的月
+  const longDays = [1, 3, 5, 7, 8, 10, 12]
+  // 2月 28天
+  if (numberMonth === 2) {
+    dayTotal = 28
+  } else if (longDays.includes(numberMonth)) {
+    dayTotal = 31
+  } else {
+    dayTotal = 30
+  }
+  dayList.length = 0 //清空数组
+  for (let i = 1; i <= dayTotal; i++) {
+    let item = {
+      label: i.toString(),
+      value: i < 10 ? '0' + i.toString() : i.toString(),
+    }
+    dayList.push(item)
+  }
+}
 
 const ruleForm = reactive({
   province,
   city,
   month: '',
+  day: '',
 })
 const ruleFormRef = ref()
 // 校验规则
@@ -129,16 +180,25 @@ const rules = reactive({
   province: [{ required: true, message: '请选择省份', trigger: 'blur' }],
   city: [{ required: true, message: '请选择城市', trigger: 'blur' }],
   month: [{ required: true, message: '请选择月份', trigger: 'blur' }],
+  day: [{ required: true, message: '请选择日期', trigger: 'blur' }],
 })
+
 
 // 天气查询先校验再查询
 const queryWeather = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      weatherQueryStore.getTableData({
+      let params = {
         city: CodeToText[ruleForm.city],
-        month: ruleForm.month,
+        endDay: '2021-' + ruleForm.month + '-' + ruleForm.day,
+      }
+      axios.get(apis.predictTemp, { params: params }).then((res) => {
+        console.log('获取来的原始气温数据', res)
+        const { success = false, data } = res
+        if (success) {
+          emit('changeData',data)
+        }
       })
     } else {
       console.log('error submit!', fields)

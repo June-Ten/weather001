@@ -1,7 +1,8 @@
+<!-- 用户管理 -->
 <template>
   <div v-if="!power">当前用户没有权限,请用管理员账号登录</div>
   <div v-if="power">
-    用户管理
+    <div  class="title">用户管理</div>
     <el-table :data="tableData" style="width: 100%">
       <el-table-column
         fixed
@@ -153,4 +154,13 @@ const handleDelete = (userid) => {
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.title {
+  display: flex;
+    align-items: center;
+    height: 40px;
+    font-size: 20px;
+    font-weight: 500;
+    border-bottom: 1px solid #ccc;
+}
+</style>

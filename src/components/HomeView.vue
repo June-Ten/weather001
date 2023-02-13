@@ -61,14 +61,15 @@
     >
     <el-menu-item index="/home/precipitation">全国降水量</el-menu-item>
     <el-menu-item index="/home/predict-temp">气温预测</el-menu-item>
+    <el-menu-item index="/home/weather-predict">天气预测预测</el-menu-item>
     <el-menu-item index="/home/manage-user">用户管理</el-menu-item>
-    <el-sub-menu index="/home/tensorflow">
+    <!-- <el-sub-menu index="/home/tensorflow">
       <template #title>气温预测</template>
       <el-menu-item index="/home/predict-maxTemp">最高气温</el-menu-item>
       <el-menu-item index="/home/predict-minTemp">最低气温</el-menu-item>
       <el-menu-item index="/home/predict-test">test</el-menu-item>
       <el-menu-item index="/home/predict-last">last</el-menu-item>
-    </el-sub-menu>
+    </el-sub-menu> -->
   </el-menu>
   <div class="main">
     <router-view></router-view>
@@ -88,6 +89,9 @@ onMounted(async () => {
   await router.isReady()
   activeIndex.value = route.path
   let storageUsername = sessionStorage.getItem('username')
+  if (!storageUsername) {
+    router.push('/login')
+  }
   username.value = storageUsername === 'sys' ? '系统' : '普通'
 })
 
