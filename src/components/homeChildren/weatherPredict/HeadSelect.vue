@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { reactive, ref,defineEmits  } from 'vue'
+import { reactive, ref  } from 'vue'
 import { provinceAndCityData, CodeToText } from 'element-china-area-data'
 import axios from 'axios'
 import apis from '@src/apis'
@@ -193,11 +193,12 @@ const queryWeather = async (formEl) => {
         city: CodeToText[ruleForm.city],
         endDay: '2021-' + ruleForm.month + '-' + ruleForm.day,
       }
-      axios.get(apis.predictTemp, { params: params }).then((res) => {
+      axios.get(apis.newPredcit, { params: params }).then((res) => {
         console.log('获取来的原始气温数据', res)
-        const { success = false, data } = res
+        const { success = false, data=[],aqiData=[] } = res
         if (success) {
-          emit('changeData',data)
+          console.log('aqi', data)
+          emit('changeData',data,aqiData)
         }
       })
     } else {

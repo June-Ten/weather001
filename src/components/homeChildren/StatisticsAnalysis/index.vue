@@ -2,11 +2,26 @@
 <template>
   <HeaderSelector></HeaderSelector>
   <div class="pieAndBar-box">
-    <div class="pie" v-if="statAnalStore.pieData.success">
-      <Pie></Pie>
+    <div class="first-box" style="display: flex;">
+      <div class="pie" v-if="statAnalStore.pieData.success">
+        <Pie></Pie>
+      </div>
+      <div class="bar" v-if="statAnalStore.windBarData.success">
+        <WindBar></WindBar>
+      </div>
     </div>
-    <div class="bar" v-if="statAnalStore.windBarData.success">
-      <WindBar></WindBar>
+
+    <div class="second-box" style="margin-top: 100px;display: flex;">
+      <div class="sunny">
+        <!-- 每月的晴天统计 -->
+        <MonthlySunnyStatistics
+          v-if="statAnalStore.sunnyDayData.success"
+        ></MonthlySunnyStatistics>
+      </div>
+      
+      <div class="aqi-box">
+          <AQI v-if="statAnalStore.aqiData.success"></AQI>
+        </div>
     </div>
   </div>
 </template>
@@ -15,6 +30,8 @@
 import HeaderSelector from './HeaderSelect.vue'
 import Pie from './Pie.vue'
 import WindBar from './WindBar.vue'
+import MonthlySunnyStatistics from './MonthlySunnyStatistics.vue'
+import AQI from './AQI.vue'
 import { useStatAnalStore } from '@src/store/statisticsAnalysis.js'
 
 const statAnalStore = useStatAnalStore()
@@ -54,6 +71,7 @@ const statAnalStore = useStatAnalStore()
 <style lang="less" scoped>
 .pieAndBar-box {
   display: flex;
+  flex-direction: column;
   margin-top: 100px;
   width: 100%;
   height: 500px;
@@ -62,6 +80,14 @@ const statAnalStore = useStatAnalStore()
     height: 500px;
   }
   .bar {
+    width: 500px;
+    height: 500px;
+  }
+  .sunny {
+    width: 600px;
+    height: 500px;
+  }
+  .aqi-box {
     width: 500px;
     height: 500px;
   }

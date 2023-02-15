@@ -227,7 +227,7 @@ async function startPredict(airPassagnerData) {
   let val = baseValue
   for (let i = 0; i < prediction.length; i += 1) {
     const item = {}
-    const date = baseDate.add(1, 'months')
+    const date = baseDate.add(1, 'day')
     item.time = moment(date).format('YYYY-MM-DD')
     // item.value = val + val * prediction[i];
     item.value = prediction[i] *(maxNumber - minNumber) +minNumber

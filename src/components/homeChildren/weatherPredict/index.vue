@@ -26,12 +26,16 @@ let realWeatherData = {
   maxNumber: 0, // 最高温度
   minNumber: 0, // 最低温度
   rawDate: '', // 日期
+  aqiNumber: 0, // aqi指数
+  aqiLevel: '', // aqi等级
 }
 
 let predictWeatherData = {
   // 预测数据
   maxNumber: 0, // 最高温度
   minNumber: 0, // 最低温度
+  aqiNumber: 0, // aqi指数
+  aqiLevel: '', // aqi等级
 }
 
 onMounted(() => {
@@ -52,18 +56,38 @@ onMounted(() => {
     if (e?.data?.index === 2) {
       // 预测的最低温度
       predictWeatherData.minNumber = parseInt(e.data[0].value)
+      // 开始预测aqi
+      let tempData = rawAqiData.map((item) => {
+        let newItem = {
+          Date: item.Date,
+          Number: item.aqiNumber,
+        }
+        return newItem
+      })
+      // console.log('aqi最后', tempData)
+      myRef.value.contentWindow.postMessage(tempData)
+      
+    }
+    if (e?.data?.index === 3) {
+      // 预测的aqi
+      predictWeatherData.aqiNumber = parseInt(e.data[0].value)
+      predictWeatherData.aqiLevel = judgmentAqiLevel(predictWeatherData.aqiNumber)
       console.log('预测完之后',predictWeatherData)
       // 预测完之后
       tableDataSource.push({
         date: realWeatherData.rawDate,
         maxTemp: predictWeatherData.maxNumber,
         minTemp: predictWeatherData.minNumber,
+        aqiLevel: predictWeatherData.aqiLevel,
+        aqiNumber: predictWeatherData.aqiNumber
       })
       // 原始数据
       tableDataSource.push({
         date: realWeatherData.rawDate,
         maxTemp: realWeatherData.maxNumber,
         minTemp: realWeatherData.minNumber,
+        aqiLevel: realWeatherData.aqiLevel,
+        aqiNumber: realWeatherData.aqiNumber
       })
       tableDataSource.forEach((item, index) => {
         switch (index) {
@@ -84,11 +108,15 @@ onMounted(() => {
   })
 })
 
-let rawData = reactive([]) // 查询的原始数据
-const getRawData = (value) => {
+let rawAqiData = reactive([]) // 查询的原始aqi数据
+let rawData = reactive([]) // 查询的原始气温数据
+const getRawData = (value,aqiData) => {
   // handle select传过来的
   value.map((item) => {
     rawData.push(item)
+  })
+  aqiData.map((item) => {
+    rawAqiData.push(item)
   })
 }
 
@@ -107,8 +135,33 @@ const myPredict = () => {
   realWeatherData.maxNumber = parseInt(tempRawData.maxNumber)
   realWeatherData.minNumber = parseInt(tempRawData.minNumber)
   realWeatherData.rawDate = tempRawData.Date
-  console.log('原始数据',realWeatherData,tempRawData)
+  let tempReal =rawAqiData.pop() 
+  realWeatherData.aqiNumber = tempReal.aqiNumber
+  realWeatherData.aqiLevel = judgmentAqiLevel(Number(realWeatherData.aqiNumber))
+  console.log('原始数据',realWeatherData,tempRawData,rawAqiData)
   myRef.value.contentWindow.postMessage(newData)
+}
+
+// 判断等级
+const judgmentAqiLevel = (aqiNumber) => {
+  if (aqiNumber >=0 && aqiNumber <=50) {
+    return '优'
+  }
+  if (aqiNumber >=51 && aqiNumber <=100) {
+    return '良'
+  }
+  if (aqiNumber >=101 && aqiNumber <=150) {
+    return '轻度污染'
+  }
+  if (aqiNumber >=151 && aqiNumber <=200) {
+    return '中度污染'
+  }
+  if (aqiNumber >=201 && aqiNumber <=300) {
+    return '重度污染'
+  }
+  if (aqiNumber >=301 && aqiNumber <=500) {
+    return '严重污染'
+  }
 }
 
 let tableDataSource = reactive([]) // table data
