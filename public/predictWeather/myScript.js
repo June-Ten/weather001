@@ -7,8 +7,8 @@ const LSTM_UNITS = 30
 const X_LEN = STEP_SIZE + STEP_OFFSET * (STEP_NUM - 1)
 const Y_LEN = TARGET_SIZE
 
-// const config = { epochs: 30, batchSize: 4 }
-const config = { epochs: 3, batchSize: 4 }
+const config = { epochs: 30, batchSize: 4 }
+// const config = { epochs: 3, batchSize: 4 }
 
 
 function buildX(data, stepSize, stepNum, stepOffset) {

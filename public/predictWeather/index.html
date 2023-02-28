@@ -21,7 +21,7 @@
     <div id="predictionView"></div>
   </div>
 </div>
-<button id="start">iframe开始111222</button>
+<button id="start">iframe开始999</button>
 <!-- partial -->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/tensorflow/1.0.4/tf.min.js'></script>
 <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.min.js'></script> -->
@@ -36,7 +36,7 @@
 <script>
   let index = 0 // 1 最高温度；2 最低温度；3 空气质量；
   window.addEventListener('message', async (e) => {
-    console.log('vue => iframe',e);
+    console.log('vue => iframe接收到vue发来了',e);
     index++
     let result =  await startPredict(e.data)
     result.index = index

@@ -78,7 +78,7 @@ import apis from '@src/apis'
 
 
 const props = defineProps(['rawData'])
-const emit = defineEmits('changeData')
+const emit = defineEmits(['changeData'])
 
 // 省份,城市
 let province = ref('')

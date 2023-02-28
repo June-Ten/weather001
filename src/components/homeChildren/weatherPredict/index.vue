@@ -39,6 +39,7 @@ let predictWeatherData = {
 }
 
 onMounted(() => {
+  // myRef.value.contentWindow.postMessage('mounted',"*")
   window.addEventListener('message', (e) => {
     console.log('iframe发送给vue的数据', e.data)
     if (e?.data?.index === 1) {
